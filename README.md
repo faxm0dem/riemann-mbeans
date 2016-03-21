@@ -28,6 +28,8 @@ On debian or redhat you could also add the classpath using the `EXTRA_CLASSPATH`
 (mbeans/instrumentation)
 ```
 
+This will collect the default stats every 10 seconds.
+
 ### Custom beans
 
 ```clojure
@@ -37,12 +39,16 @@ On debian or redhat you could also add the classpath using the `EXTRA_CLASSPATH`
 	(mbeans/instrumentation {:interval 10 :mbeans beans}))
 ```
 
+This will collect two beans every 10 seconds.
+
 ### Custom beans with custom service name
 
 ```clojure
 (load-plugins)
 (mbeans/instrumentation {:interval 10 :mbeans [{:mbean "java.lang:type=Runtime" :property :Uptime :service "the jvm's uptime"}]})
 ```
+
+This will collect one bean and override its service name.
 
 ## Usage
 
