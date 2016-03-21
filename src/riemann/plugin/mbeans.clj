@@ -7,17 +7,34 @@
             [riemann.config]
             [clojure.java.jmx :as jmx]))
 
+;(get (jmx/read "java.lang:type=MemoryPool,name=PS Old Gen" :CollectionUsage) :init)
+;(get (jmx/read mbean property) attr)
+;(def mbeans [{:mbean "java.lang:type=MemoryPool,name=PS Old Gen" :property :CollectionUsage :attribute :init}{:mbean "java.lang:type=Memory" :property :NonHeapMemoryUsage :atteibute :used}])
+
+(defn eat-bean
+  "takes a map describing mbean. returns a map containing the corresponding metric in the :metric value and the name in the :service value"
+  [{:keys [mbean property attribute service] :or {service (str mbean property attribute)}}]
+  (if attribute
+    {:service service :metric (attribute (jmx/read mbean property))}
+    {:service service :metric (jmx/read mbean property)}))
+
+(defn eat-beans
+  "takes a sequence of maps describing mbeans. returns a sequence of maps containing the corresponding metrics in the :metric value"
+  [mbeans]
+  (map eat-bean mbeans))
+
 (defn instrumentation-service
   "Returns a service which samples jmx every
   interval seconds, and sends events to the core."
   [opts]
   (let [interval (long (* 1000 (get opts :interval 10)))
-        service-name (get opts :service-name "jmx.memory.heap.used")
-        jmx-read (get opts :jmx-read ["java.lang:type=Memory" :HeapMemoryUsage])
-        jmx-func (get opts :jmx-func #(:used %))
+        mbeans (get opts :mbeans [{:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :used}
+                                  {:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :committed}
+                                  {:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :init}
+                                  {:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :max}])
         enabled? (get opts :enabled? true)]
     (service/thread-service
-      ::jmx-instrumentation [interval service-name enabled?]
+      ::jmx-instrumentation [interval mbeans enabled?]
       (fn measure [core]
         (Thread/sleep interval)
 
@@ -26,8 +43,7 @@
           (let [base (event {:host (localhost)
                              ; Default TTL of 2 intervals, and convert ms to s.
                              :ttl  (long (/ interval 500))})
-                ;events [{:service service-name :metric (:used (jmx/read "java.lang:type=Memory" :HeapMemoryUsage))}]]
-                events [{:service service-name :metric (jmx-func (apply jmx/read jmx-read))}]]
+                events (eat-beans mbeans)]
             (if enabled?
               ; Stream each event through this core
               (doseq [event events]

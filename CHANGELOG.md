@@ -14,13 +14,12 @@ All notable changes to this project will be documented in this file. This change
 
 * baz
 
-## [0.1.1] - 2016-03-21
+## [0.2.1] - 2016-03-21
 
-### Removed
-- `make-widget-sync` - we're all async, all the time.
+### Added
 
-### Fixed
-- Fixed widget maker to keep working when daylight savings switches over.
+* reloads now work
+* custom mbeans can be queried
 
 ## 0.1.0 - 2016-03-21
 
@@ -30,3 +29,4 @@ All notable changes to this project will be documented in this file. This change
 
 [unreleased]: https://github.com/your-name/riemann-mbeans/compare/0.1.1...HEAD
 [0.1.1]: https://github.com/your-name/riemann-mbeans/compare/0.1.0...0.1.1
+[0.2.1]: https://github.com/your-name/riemann-mbeans/compare/0.1.1...0.2.1
