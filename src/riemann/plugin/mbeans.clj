@@ -38,13 +38,6 @@
           (catch Exception e
             (warn e "jmx instrumentation service caught")))))))
 
-(defn periodical
-    "Periodically collect jmx stats."
-    ([]
-        (periodical 10))
-    ([& args]
-        (riemann.config/service! (apply instrumentation-service args))))
-
 (defn instrumentation
   "adds a jmx instrumentation service to core"
   [& opts]
