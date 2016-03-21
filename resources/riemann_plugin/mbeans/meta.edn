@@ -1,0 +1,4 @@
+{:plugin "mbeans"
+ :title "A plugin for collecting jvm statistics"
+ :git-repo "https://github.com/ccin2p3/riemann-mbeans"
+ :require riemann.plugin.mbeans}
