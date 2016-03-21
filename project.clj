@@ -1,4 +1,4 @@
-(defproject riemann-mbeans "0.2.0-SNAPSHOT"
+(defproject riemann-mbeans "0.2.1-SNAPSHOT"
   :description "riemann plugin to collect internal jvm statistics"
   :url "http://github.com/ccin2p3/riemann-mbeans"
   :license {:name "CeCILL-C"
