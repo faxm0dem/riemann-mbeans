@@ -52,17 +52,17 @@ This will collect one bean and override its service name.
 
 ## Usage
 
-### `mbeans/instrumentation opts`
+### `(mbeans/instrumentation opts)`
 
 This function will add a service to the riemann core that will retrieve JMX mbeans on a periodic fashion.
 The map `opts` should contain two keys:
 
-* `interval` periodicity in seconds (defaults to 10)
-* `mbeans` sequence of hash maps describing the beans to collect (See [clojure/java.jmx](https://github.com/clojure/java.jmx)). Every element of `mbeans` should contain the following keys:
-  * `mbean` the name of the bean
-  * `property` the bean's property to collect
-  * `attribute` the property's attribute to collect (optional if the property is scalar)
-  * `service` the name of the riemann event's service. This defaults to the concatenation of the three previous values.
+* `:interval` periodicity in seconds (defaults to 10)
+* `:mbeans` sequence of hash maps describing the beans to collect (See [clojure/java.jmx](https://github.com/clojure/java.jmx)). Every element of `mbeans` should contain the following keys:
+  * `:mbean` the name of the bean
+  * `:property` the bean's property to collect
+  * `:attribute` the property's attribute to collect (optional if the property is scalar)
+  * `:service` the name of the riemann event's service. This defaults to the concatenation of the three previous values.
 
 The service should behave as expected with respect to a configuration reload!
 
