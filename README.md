@@ -20,9 +20,18 @@ On debian or redhat you could also add the classpath using the `EXTRA_CLASSPATH`
 
 ## Synopsis
 
+### Defaults
+
 ```clojure
 (load-plugins)
 
-(mbeans/instrumentation {:interval 10})
+(mbeans/instrumentation)
+```
+
+### Custom
+
+```clojure
+(load-plugins)
+(mbeans/instrumentation {:interval 10}
 ```
 

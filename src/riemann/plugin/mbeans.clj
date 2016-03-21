@@ -17,7 +17,7 @@
         jmx-func (get opts :jmx-func #(:used %))
         enabled? (get opts :enabled? true)]
     (service/thread-service
-      ::jmx-instrumentation [interval enabled?]
+      ::jmx-instrumentation [interval service-name enabled?]
       (fn measure [core]
         (Thread/sleep interval)
 
@@ -43,7 +43,7 @@
     ([]
         (periodical 10))
     ([& args]
-        (riemann.config/service! (apply jmx-instrumentation-service args))))
+        (riemann.config/service! (apply instrumentation-service args))))
 
 (defn instrumentation
   "adds a jmx instrumentation service to core"
