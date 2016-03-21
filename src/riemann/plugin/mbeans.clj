@@ -7,10 +7,6 @@
             [riemann.config]
             [clojure.java.jmx :as jmx]))
 
-;(get (jmx/read "java.lang:type=MemoryPool,name=PS Old Gen" :CollectionUsage) :init)
-;(get (jmx/read mbean property) attr)
-;(def mbeans [{:mbean "java.lang:type=MemoryPool,name=PS Old Gen" :property :CollectionUsage :attribute :init}{:mbean "java.lang:type=Memory" :property :NonHeapMemoryUsage :atteibute :used}])
-
 (defn eat-bean
   "takes a map describing mbean. returns a map containing the corresponding metric in the :metric value and the name in the :service value"
   [{:keys [mbean property attribute service]}]
@@ -27,6 +23,8 @@
 (defn instrumentation-service
   "Returns a service which samples jmx every
   interval seconds, and sends events to the core."
+  ([] (instrumentation-service {}))
+  (
   [opts]
   (let [interval (long (* 1000 (get opts :interval 10)))
         mbeans (get opts :mbeans [{:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :used}
@@ -54,6 +52,7 @@
 
           (catch Exception e
             (warn e "jmx instrumentation service caught")))))))
+   )
 
 (defn instrumentation
   "adds a jmx instrumentation service to core"
