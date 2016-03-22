@@ -52,11 +52,17 @@ This will collect one bean and override its service name.
 
 ## Usage
 
+This function will add a service to the riemann core that will periodically retrieve JMX mbeans. You can run the function standalone.
+
+```
+(mbeans/instrumentation)
+```
+
+Or you can call it with options.
+
 ```
 (mbeans/instrumentation opts)
 ```
-
-This function will add a service to the riemann core that will periodically retrieve JMX mbeans.
 
 The map `opts` should contain two keys:
 
