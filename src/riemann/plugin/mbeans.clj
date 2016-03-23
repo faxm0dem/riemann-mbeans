@@ -9,11 +9,15 @@
 
 (defn eat-bean
   "takes a map describing mbean. returns a map containing the corresponding metric in the :metric value and the name in the :service value"
-  [{:keys [mbean property attribute service]}]
-  (let [service (or service (str mbean property attribute))]
-    (if attribute
-      {:service service :metric (attribute (jmx/read mbean property))}
-      {:service service :metric (jmx/read mbean property)})))
+  [{:keys [mbean property attribute traverse service]}]
+  (if traverse
+    (let [service (or service (apply str (cons mbean traverse)))
+          metric (get-in (jmx/read mbean (first traverse)) (rest traverse))]
+      {:service service :metric metric})
+    (let [service (or service (str mbean property attribute))]
+      (if attribute
+        {:service service :metric (attribute (jmx/read mbean property))}
+        {:service service :metric (jmx/read mbean property)}))))
 
 (defn eat-beans
   "takes a sequence of maps describing mbeans. returns a sequence of maps containing the corresponding metrics in the :metric value"
