@@ -50,6 +50,22 @@ This will collect two beans every 10 seconds.
 
 This will collect one bean and override its service name.
 
+### Custom beans with deep nesting
+
+```clojure
+(load-plugins)
+(mbeans/instrumentation
+  {:interval 60
+   :mbeans [{:mbean "java.lang:type=GarbageCollector,name=ParNew"
+             :traverse (list :LastGcInfo :memoryUsageAfterGc (keyword "Code Cache") :value :used)}]})
+```
+
+This will collect one bean every 60 seconds using the `:traverse` option to get values like:
+
+```clojure
+(-> (jmx/read mbean :LastGcInfo) :memoryUsageAfterGc (keyword "Code Cache") :value :used)
+```
+
 ## Usage
 
 This function will add a service to the riemann core that will periodically retrieve JMX mbeans. You can run the function standalone.
@@ -71,11 +87,14 @@ The map `opts` should contain two keys:
   * `:mbean` - the name of the bean.
   * `:property` - the bean's property to collect.
   * `:attribute` - the property's attribute to collect (optional if the property is scalar).
-  * `:service` - the name of the riemann event's service. This defaults to a concatenation of the three previous values.
+  * `:traverse` list of nested attributes to collect, first item being the property
+    (if used then do not use `:property` or `:attribute`)
+  * `:service` - the name of the riemann event's service.
+    This defaults to the concatenation of either the property and attribute or the traversal values
+    to the mbean name.
 
 The service should behave as expected with respect to a configuration reload!
 
 ### Caveats
 
-* Not sure if there are any nested types or tables. If there are, their retrieval will probably require an API change.
 * If one bean fails, nothing will be reported
