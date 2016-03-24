@@ -27,19 +27,19 @@
 (defn instrumentation-service
   "Returns a service which samples jmx every
   interval seconds, and sends events to the core."
-  ([] (instrumentation-service {}))
-  (
-  [opts]
-  (let [interval (long (* 1000 (get opts :interval 10)))
-        mbeans (get opts :mbeans [{:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :used}
-                                  {:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :committed}
-                                  {:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :init}
-                                  {:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :max}])
-        enabled? (get opts :enabled? true)]
-    (service/thread-service
-      ::jmx-instrumentation [interval mbeans enabled?]
-      (fn measure [core]
-        (Thread/sleep interval)
+  ([]
+   (instrumentation-service {}))
+  ([opts]
+    (let [interval (long (* 1000 (get opts :interval 10)))
+          mbeans (get opts :mbeans [{:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :used}
+                                    {:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :committed}
+                                    {:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :init}
+                                    {:mbean "java.lang:type=Memory" :property :HeapMemoryUsage :attribute :max}])
+          enabled? (get opts :enabled? true)]
+      (service/thread-service
+        ::jmx-instrumentation [interval mbeans enabled?]
+        (fn measure [core]
+          (Thread/sleep interval)
 
         (try
           ; Take events from core and instrumented services
@@ -55,8 +55,7 @@
               (dorun events)))
 
           (catch Exception e
-            (warn e "jmx instrumentation service caught")))))))
-   )
+            (warn e "jmx instrumentation service caught"))))))))
 
 (defn instrumentation
   "adds a jmx instrumentation service to core"
